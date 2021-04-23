@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Source Receiver</title>
+</head>
+<body>
+
+<p>Events list</p>
+<ul id="list">
+</ul>
+
+<script type="text/javascript">
+    const url = `http://localhost:82/EventSource/source.php?token=e1ffddb639ba4cf902138fa0d3f4534090ae37ccd56c2c286604b0b3bda2d605`;
+    const eventSource = new EventSource(url,{
+        withCredentials: true,
+    });
+
+    eventSource.addEventListener("message",(event)=>{
+        // console.log("eventSource.onmessage.event : ", event);
+        const newElement = document.createElement("li");
+        const eventList = document.getElementById("list");
+        try {
+            newElement.textContent = "message: " + event.data;
+            eventList.appendChild(newElement);
+        }catch (e){
+            console.error(`eventSource.onmessage() : ` + e);
+        }finally {
+            console.log("Number of list items : " + eventList.childNodes.length);
+        }
+    });
+
+    eventSource.addEventListener("error",(event)=>{
+        console.error("eventSource.onerror.event : ", event);
+
+        eventSource.close();
+    });
+</script>
+
+</body>
+</html>
